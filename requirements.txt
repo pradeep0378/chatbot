@@ -2,3 +2,5 @@ SpeechRecognition
 gtts
 langchain
 langchain_community
+get_pyaudio
+
