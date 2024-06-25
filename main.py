@@ -1,15 +1,9 @@
 import streamlit as st
-import pyttsx3
 import speech_recognition as sr
 from langchain import OpenAI, LLMChain, PromptTemplate
 from langchain.memory import ConversationBufferMemory
-
-# Initialize text-to-speech engine
-engine = pyttsx3.init()
-
-# Set the voice to female
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
+from gtts import gTTS
+import os
 
 def get_response_from_ai(human_input, history):
     template = """
@@ -31,7 +25,7 @@ def get_response_from_ai(human_input, history):
         template=template
     )
     chatgpt_chain = LLMChain(
-        llm=OpenAI(api_key="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", temperature=0.2),
+        llm=OpenAI(api_key="sk-proj-wqA3pNqjr2JXlX4QiTvzT3BlbkFJYPPhQ6kaEFqy69NMLA4z", temperature=0.2),
         prompt=prompt,
         verbose=True,
         memory=ConversationBufferMemory(k=2)
@@ -67,13 +61,14 @@ def main():
                 st.write(f"Zara: {response}")
                 
                 # Text-to-speech
-                engine.say(response)
-                engine.runAndWait()
+                tts = gTTS(response)
+                tts.save("response.mp3")
+                st.audio("response.mp3", format="audio/mp3")
         except sr.UnknownValueError:
             st.write("Sorry, I did not understand that.")
         except sr.RequestError as e:
             st.write(f"Could not request results from Google Speech Recognition service; {e}")
-        
+    
     st.write("Conversation History")
     st.write(st.session_state.history)
 
